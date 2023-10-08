@@ -18,6 +18,9 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		D45A90BEA6604E81A3AE590A /* Metropolis-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 213C85C62908498394FC66C5 /* Metropolis-Regular.otf */; };
 		EB9A871C3E3C4EAEA22D22D7 /* Metropolis-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = D2F5D863D55E48058108DDE2 /* Metropolis-Bold.otf */; };
+		CBC87097D6CB4491804F95D1 /* MarketPro-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 79F0FFB165A0446A90471C7C /* MarketPro-Bold.ttf */; };
+		4ADA6FCE10D6488B954A116F /* MarketPro-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3EFE22A6AA5D47FBB7F6141E /* MarketPro-Regular.ttf */; };
+		C688EA2A4C374CDDB1D399DC /* MarketPro-CondMedium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C181863567D4A37ADEEB69F /* MarketPro-CondMedium.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +55,9 @@
 		89C6BE57DB24E9ADA2F236DE /* Pods-prepD-prepDTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-prepD-prepDTests.release.xcconfig"; path = "Target Support Files/Pods-prepD-prepDTests/Pods-prepD-prepDTests.release.xcconfig"; sourceTree = "<group>"; };
 		D2F5D863D55E48058108DDE2 /* Metropolis-Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Metropolis-Bold.otf"; path = "../src/Assets/Fonts/Metropolis-Bold.otf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		79F0FFB165A0446A90471C7C /* MarketPro-Bold.ttf */ = {isa = PBXFileReference; name = "MarketPro-Bold.ttf"; path = "../src/Assets/Fonts/MarketPro-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3EFE22A6AA5D47FBB7F6141E /* MarketPro-Regular.ttf */ = {isa = PBXFileReference; name = "MarketPro-Regular.ttf"; path = "../src/Assets/Fonts/MarketPro-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		1C181863567D4A37ADEEB69F /* MarketPro-CondMedium.ttf */ = {isa = PBXFileReference; name = "MarketPro-CondMedium.ttf"; path = "../src/Assets/Fonts/MarketPro-CondMedium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,6 +170,9 @@
 				86D78834A6D5453FB3A94ABE /* Metropolis-Medium.otf */,
 				213C85C62908498394FC66C5 /* Metropolis-Regular.otf */,
 				5D9B0E128B164A308CE6A62F /* Metropolis-SemiBold.otf */,
+				79F0FFB165A0446A90471C7C /* MarketPro-Bold.ttf */,
+				3EFE22A6AA5D47FBB7F6141E /* MarketPro-Regular.ttf */,
+				1C181863567D4A37ADEEB69F /* MarketPro-CondMedium.ttf */,
 			);
 			name = Resources;
 			path = "";
@@ -269,6 +278,9 @@
 				07651112F9AD45C78D88BD4D /* Metropolis-Medium.otf in Resources */,
 				D45A90BEA6604E81A3AE590A /* Metropolis-Regular.otf in Resources */,
 				701E907590AC40ABB88BC1D1 /* Metropolis-SemiBold.otf in Resources */,
+				CBC87097D6CB4491804F95D1 /* MarketPro-Bold.ttf in Resources */,
+				4ADA6FCE10D6488B954A116F /* MarketPro-Regular.ttf in Resources */,
+				C688EA2A4C374CDDB1D399DC /* MarketPro-CondMedium.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

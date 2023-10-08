@@ -2,6 +2,18 @@
   "migIndex": 1,
   "data": [
     {
+      "path": "src/Assets/Fonts/MarketPro-Bold.ttf",
+      "sha1": "d8d229894c528ac579d3f1d385f73d1302744a90"
+    },
+    {
+      "path": "src/Assets/Fonts/MarketPro-CondMedium.ttf",
+      "sha1": "74d370131be863d0a4a8552c11f6b99da6e8710d"
+    },
+    {
+      "path": "src/Assets/Fonts/MarketPro-Regular.ttf",
+      "sha1": "3bde753c03651fcfeb8ac42b9c98782374faeb1a"
+    },
+    {
       "path": "src/Assets/Fonts/Metropolis-Bold.otf",
       "sha1": "335e5e57450f52a95b5bc3cd03d91071ef389c28"
     },
