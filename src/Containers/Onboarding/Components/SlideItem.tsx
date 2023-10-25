@@ -15,11 +15,12 @@ interface SlideProps {
     subtitle?: string;
     main_img: HTMLImageElement;
   };
+  onPress: () => void;
 }
 
 const { width, height } = Dimensions.get("screen");
 
-const SlideItem = ({ item }: SlideProps) => {
+const SlideItem = ({ item, onPress }: SlideProps) => {
   return (
     <View style={styles.container}>
       <Image source={item.main_img} style={styles.main} />
@@ -36,7 +37,7 @@ const SlideItem = ({ item }: SlideProps) => {
         {item.subtitle}
       </Text>
       {item.key == 3 && (
-        <TouchableOpacity style={styles.btn}>
+        <TouchableOpacity style={styles.btn} {...{ onPress }}>
           <Text variant="title16black_semibold" color="primary800">
             Get Started
           </Text>

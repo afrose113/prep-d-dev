@@ -1,11 +1,11 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface LocalState {
   access_token: string | undefined;
   apiUrl: string;
 }
 
-export const BASE_URL = 'http://188.40.111.147:8000/api';
+export const BASE_URL = "";
 
 const initialState: LocalState = {
   access_token: undefined,
@@ -13,25 +13,25 @@ const initialState: LocalState = {
 };
 
 const localSlice = createSlice({
-  name: 'local',
+  name: "local",
   initialState,
   reducers: {
     setAccessToken: (
       state,
-      action: PayloadAction<LocalState['access_token']>,
+      action: PayloadAction<LocalState["access_token"]>
     ) => {
       state.access_token = action.payload;
     },
-    setApiUrl: (state, action: PayloadAction<LocalState['apiUrl']>) => {
+    setApiUrl: (state, action: PayloadAction<LocalState["apiUrl"]>) => {
       state.apiUrl = action.payload;
     },
-    removeAccessToken: state => {
+    removeAccessToken: (state) => {
       state.access_token = undefined;
     },
   },
 });
 
-export const {setApiUrl, setAccessToken, removeAccessToken} =
+export const { setApiUrl, setAccessToken, removeAccessToken } =
   localSlice.actions;
 
 export default localSlice;

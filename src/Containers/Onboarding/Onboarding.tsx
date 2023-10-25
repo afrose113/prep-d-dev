@@ -54,7 +54,12 @@ const Onboarding = ({ navigation }: AuthNavigationProps<"Onboarding">) => {
     <View style={styles.container}>
       <FlatList
         data={list}
-        renderItem={({ item }) => <SlideItem item={item} />}
+        renderItem={({ item }) => (
+          <SlideItem
+            item={item}
+            onPress={() => navigation.navigate("HomeNavigator")}
+          />
+        )}
         horizontal
         showsHorizontalScrollIndicator={false}
         snapToAlignment="center"
@@ -64,7 +69,10 @@ const Onboarding = ({ navigation }: AuthNavigationProps<"Onboarding">) => {
         viewabilityConfig={viewabilityConfig}
       />
       <Pagination data={list} scrollX={scrollX} index={index} />
-      <TouchableOpacity style={styles.btn}>
+      <TouchableOpacity
+        style={styles.btn}
+        onPress={() => navigation.navigate("HomeNavigator")}
+      >
         <Text textAlign="center" variant="title12black_semibold">
           Skip
         </Text>
@@ -76,7 +84,7 @@ const Onboarding = ({ navigation }: AuthNavigationProps<"Onboarding">) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.white,
+    backgroundColor: theme.colors.primary800,
   },
   btn: { marginVertical: "5%" },
 });
