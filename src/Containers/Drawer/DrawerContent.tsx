@@ -1,44 +1,86 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import Cross from "@/Assets/Svg/close.svg";
-import Card from "@/Assets/Svg/card.svg";
-import Setting from "@/Assets/Svg/Settings.svg";
-import Info from "@/Assets/Svg/Info.svg";
-import User from "@/Assets/Svg/User.svg";
-import Location from "@/Assets/Svg/Location.svg";
-import Help from "@/Assets/Svg/help.svg";
-import InfoInfluence from "@/Assets/Svg/Info-in.svg";
-import Compass from "@/Assets/Svg/Compas-in.svg";
-import SettingsInfluence from "@/Assets/Svg/Settings-in.svg";
-import HelpInfluence from "@/Assets/Svg/help-in.svg";
-
-import Logout from "@/Assets/Svg/Logout.svg";
 import { Text, theme } from "@/Components/Theme";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { HomeRoutes } from "@/Navigator/Navigation";
 import LoginBtn from "./Components/LoginBtn";
+import { useAppSelector } from "@/Store";
+import { removeAccessToken } from "@/Store/slices/local";
+import { useDispatch } from "react-redux";
 
 const list: (Record<string, any> & { nav?: keyof HomeRoutes })[] = [
-  { key: 1, tab: "Profile", icon: <User />, nav: "Profile" },
-  { key: 2, tab: "Addresses", icon: <Location />, nav: "Addresses" },
-  { key: 3, tab: "Payment Method", icon: <Card />, nav: "Payment" },
-  { key: 4, tab: "Help Center", icon: <Help />, nav: "HelpCenter" },
-  { key: 5, tab: "Settings", icon: <Setting />, nav: "Settings" },
-  { key: 6, tab: "About", icon: <Info />, nav: "About" },
+  {
+    key: 1,
+    tab: "Profile",
+    icon: require("@/Assets/gif/Profile.gif"),
+    nav: "Profile",
+  },
+  {
+    key: 2,
+    tab: "Addresses",
+    icon: require("@/Assets/gif/Address.gif"),
+    nav: "Addresses",
+  },
+  {
+    key: 3,
+    tab: "Payment Method",
+    icon: require("@/Assets/gif/Payment.gif"),
+    nav: "Payment",
+  },
+  {
+    key: 4,
+    tab: "Help Center",
+    icon: require("@/Assets/gif/HelpCenter.gif"),
+    nav: "HelpCenter",
+  },
+  {
+    key: 5,
+    tab: "Settings",
+    icon: require("@/Assets/gif/Settings.gif"),
+    nav: "Settings",
+  },
+  {
+    key: 6,
+    tab: "About",
+    icon: require("@/Assets/gif/About.gif"),
+    nav: "About",
+  },
 ];
 const list2: (Record<string, any> & { nav?: keyof HomeRoutes })[] = [
-  { key: 1, tab: "Explore", icon: <Compass />, nav: "Explore" },
-  { key: 2, tab: "Help Center", icon: <HelpInfluence />, nav: "HelpCenter" },
-  { key: 3, tab: "Settings", icon: <SettingsInfluence />, nav: "Settings" },
-  { key: 4, tab: "About", icon: <InfoInfluence />, nav: "About" },
+  {
+    key: 1,
+    tab: "Explore",
+    icon: require("@/Assets/gif/Profile.gif"),
+    nav: "Explore",
+  },
+  {
+    key: 2,
+    tab: "Help Center",
+    icon: require("@/Assets/gif/HelpCenter.gif"),
+    nav: "HelpCenter",
+  },
+  {
+    key: 3,
+    tab: "Settings",
+    icon: require("@/Assets/gif/Settings.gif"),
+    nav: "Settings",
+  },
+  {
+    key: 4,
+    tab: "About",
+    icon: require("@/Assets/gif/About.gif"),
+    nav: "About",
+  },
 ];
 
 const DrawerContent = () => {
   const nav =
     useNavigation<DrawerNavigationProp<HomeRoutes, "DrawerNavigator">>();
-  const influence = false;
-  const tabs = influence ? list2 : list;
+  const { role, access_token } = useAppSelector((state) => state.local);
+  const dispatch = useDispatch();
+  const tabs = role == "influencer" ? list2 : list;
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -54,25 +96,16 @@ const DrawerContent = () => {
             style={styles.line}
             onPress={() => nav.navigate(item.nav)}
           >
-            {item.icon}
+            <Image source={item.icon} style={styles.gif} />
             <Text ms="s" color="grey800" variant="title12black_medium">
               {item.tab}
             </Text>
           </TouchableOpacity>
         );
       })}
-      {influence && (
+      {role == "influencer" && (
         <>
           <View style={styles.line2} />
-          <TouchableOpacity style={styles.customer}>
-            <Text
-              variant="title12black_medium"
-              textDecorationLine="underline"
-              color="orange"
-            >
-              Switch to Customer View
-            </Text>
-          </TouchableOpacity>
           <TouchableOpacity style={styles.influencer}>
             <Text
               variant="title12black_medium"
@@ -85,7 +118,22 @@ const DrawerContent = () => {
           <View style={styles.line2} />
         </>
       )}
-      <LoginBtn />
+      {access_token ? (
+        <TouchableOpacity
+          style={styles.line}
+          onPress={() => dispatch(removeAccessToken())}
+        >
+          <Image
+            source={require("@/Assets/gif/Logout.gif")}
+            style={styles.gif}
+          />
+          <Text ms="s" color="grey800" variant="title12black_medium">
+            Logout
+          </Text>
+        </TouchableOpacity>
+      ) : (
+        <LoginBtn />
+      )}
     </View>
   );
 };
@@ -98,6 +146,7 @@ const styles = StyleSheet.create({
     paddingVertical: "5%",
     paddingHorizontal: "7%",
   },
+  gif: { width: 34, height: 34 },
   cross: { alignSelf: "flex-end", marginEnd: "7%", marginTop: "10%" },
   greyline: {
     height: 1,
@@ -109,10 +158,6 @@ const styles = StyleSheet.create({
     marginHorizontal: "7%",
     marginTop: "7%",
     marginBottom: "8%",
-  },
-  customer: {
-    marginTop: "10%",
-    marginHorizontal: "7%",
   },
   line2: {
     backgroundColor: "#d8d8d8",

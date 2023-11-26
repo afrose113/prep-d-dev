@@ -5,7 +5,7 @@ import {
   StyleSheet,
   TextInputProps as RNTextInputProps,
 } from "react-native";
-import { theme } from "./Theme";
+import { Text, theme } from "./Theme";
 
 interface TextInputProps extends RNTextInputProps {
   touched?: boolean;
@@ -20,6 +20,11 @@ const TextInput = ({ touched, error, ...props }: TextInputProps) => {
         placeholderTextColor={theme.colors.grey600}
         {...props}
       />
+      {error && touched && (
+        <Text ms="s" variant="title12black_semibold" mt="s" color="error">
+          {error as string}
+        </Text>
+      )}
     </View>
   );
 };

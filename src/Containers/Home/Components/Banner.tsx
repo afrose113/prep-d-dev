@@ -20,9 +20,12 @@ const list = [
 const Banner = () => {
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-      {list.map((item) => {
+      {list.map((item, index: number) => {
         return (
-          <View key={item.key} style={styles.banner}>
+          <View
+            key={item.key}
+            style={[styles.banner, { marginLeft: index == 0 ? 20 : 0 }]}
+          >
             <View style={styles.line}>
               <Text
                 variant="title32black_bold"
@@ -51,9 +54,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
     borderRadius: 8,
     width: 337,
-    marginLeft: 20,
     padding: 20,
     marginTop: "5%",
+    marginEnd: 20,
   },
   line: {
     flexDirection: "row",

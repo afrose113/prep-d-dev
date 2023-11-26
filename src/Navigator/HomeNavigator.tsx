@@ -22,6 +22,14 @@ import Payment from "@/Containers/Payment";
 import AddAddress from "@/Containers/AddAddress";
 import Checkout from "@/Containers/Checkout";
 import Explore from "@/Containers/Explore";
+import Transactions from "@/Containers/Transactions";
+import DishDescription from "@/Containers/DishDescription";
+import PendingApprovals from "@/Containers/PendingApprovals";
+import SavedDrafts from "@/Containers/SavedDrafts";
+import Notifications from "@/Containers/Notifications";
+import Chats from "@/Containers/Chats";
+import UploadRecipe from "@/Containers/UploadRecipe";
+import Search from "@/Containers/Search";
 
 const Stack = createNativeStackNavigator<HomeRoutes>();
 const LoginScreens = [
@@ -44,6 +52,14 @@ const LoginScreens = [
   { AddAddress },
   { Checkout },
   { Explore },
+  { Transactions },
+  { DishDescription },
+  { PendingApprovals },
+  { SavedDrafts },
+  { Notifications },
+  { Chats },
+  { UploadRecipe },
+  { Search },
 ];
 
 export type TScreens = keyof (typeof LoginScreens)[0];

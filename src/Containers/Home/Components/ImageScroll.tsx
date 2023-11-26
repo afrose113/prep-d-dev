@@ -1,5 +1,6 @@
 import { Text, theme } from "@/Components/Theme";
-import React from "react";
+import { supabase } from "@/Lib/InitSupabase";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   ImageBackground,
@@ -9,19 +10,31 @@ import {
   View,
 } from "react-native";
 
-const list = [
-  { key: 1, img: require("@/Assets/Images/home.png") },
-  { key: 2, img: require("@/Assets/Images/home.png") },
-];
+type Banner = {
+  created_at: string;
+  id: number;
+  image: string;
+  user_id: string;
+};
 
 const ImageScroll = () => {
+  const [banner, setBanner] = useState<Banner[] | null>();
+  useEffect(() => {
+    const getHome = async () => {
+      let { data: banner_image } = await supabase
+        .from("banner_image")
+        .select("*");
+      setBanner(banner_image);
+    };
+    getHome();
+  }, []);
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-      {list.map((item) => {
+      {banner?.map((item) => {
         return (
           <ImageBackground
-            source={item.img}
-            key={item.key}
+            source={{ uri: item.image }}
+            key={item.id}
             style={styles.img}
             imageStyle={styles.imgR}
           >
@@ -60,7 +73,7 @@ const styles = StyleSheet.create({
     width: 337,
     marginStart: 20,
     marginTop: "5%",
-    padding: "3%",
+    padding: "5%",
   },
   imgR: { borderRadius: 8 },
   btn: {

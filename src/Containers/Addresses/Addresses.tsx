@@ -1,42 +1,55 @@
 import CartBtnHeader from "@/Components/CartBtnHeader";
 import { Text, theme } from "@/Components/Theme";
 import { HomeNavigationProps } from "@/Navigator/Navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Home from "@/Assets/Svg/Homeaddress.svg";
 import Location from "@/Assets/Svg/LocationAddress.svg";
 import Office from "@/Assets/Svg/Case.svg";
 import Edit from "@/Assets/Svg/edit.svg";
-
-const list = [
-  { key: 1, text: "Home", icon: <Home />, loc: "House 3, Street 10" },
-  { key: 2, text: "Work", icon: <Office />, loc: "Floor 32, Saudi Towers" },
-  {
-    key: 3,
-    text: "Apartment 993, Floor 6 ",
-    icon: <Location color={theme.colors.orange} />,
-  },
-];
+import { supabase } from "@/Lib/InitSupabase";
+import { AddressItem } from "@/@types/address";
+import { useIsFocused } from "@react-navigation/native";
 
 const Addresses = ({ navigation }: HomeNavigationProps<"Addresses">) => {
+  const [address, setaddress] = useState<AddressItem[] | null>();
+  const focus = useIsFocused();
+  useEffect(() => {
+    if (focus) {
+      const getAddress = async () => {
+        let { data: address, error } = await supabase
+          .from("consumer_address")
+          .select("*");
+        setaddress(address);
+      };
+      getAddress();
+    }
+  }, [focus]);
+
   return (
     <View style={styles.container}>
       <CartBtnHeader nav={navigation} head="Addresses" />
-      {list.map((item) => {
+      {address?.map((item) => {
         return (
           <TouchableOpacity
             style={styles.item}
-            key={item.key}
-            onPress={() => navigation.navigate("AddAddress")}
+            key={item.id}
+            onPress={() => navigation.navigate("AddAddress", { item } as any)}
           >
             <View style={styles.line}>
-              <>{item.icon}</>
+              {item.label == "Home" ? (
+                <Home />
+              ) : item.label == "Office" ? (
+                <Office />
+              ) : (
+                <Location color={theme.colors.orange} />
+              )}
               <View style={styles.address}>
                 <Text variant="title16black_semibold" color="primary">
-                  {item.text}
+                  {item.name}
                 </Text>
                 <Text variant="title12black_medium" color="grey600">
-                  {item.loc}
+                  {item.floor_unit}
                 </Text>
               </View>
             </View>

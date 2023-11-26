@@ -18,15 +18,12 @@ import { Text, theme } from "./Theme";
 import Filtericon from "@/Assets/Svg/Filter.svg";
 import _RBSheet, { RBSheetProps } from "react-native-raw-bottom-sheet";
 import Checkbox from "./Checkbox";
+import { useAppSelector } from "@/Store";
 
 const { height } = Dimensions.get("window");
 export const SLIDE_HEIGHT2 = 0.3 * height;
 
-interface filterProps {
-  onSelect: (e: number) => void;
-}
-
-const list2 = [
+const list = [
   {
     key: 1,
     text: "All",
@@ -37,68 +34,33 @@ const list2 = [
   },
 ];
 
-const list3 = [
-  {
-    key: 1,
-    text: "Trending Influencers",
-  },
-  {
-    key: 2,
-    text: "Trending Dishes",
-  },
-];
-
-const list = [
+const filter = [
   { key: 1, item: "Name" },
   { key: 2, item: "Date Added" },
 ];
 
-const Filter = ({ onSelect }: filterProps) => {
-  const [active, setactive] = useState<number>(1);
+const Filter = () => {
   const RBSheet = _RBSheet as unknown as FC<
     RBSheetProps & { children: ReactNode; ref: MutableRefObject<any> }
   >;
   const refRBSheet = useRef<any>();
-  const influence = false;
-  const tabs = influence ? list3 : list2;
+  const [active, setactive] = useState<any>(1);
+  const [checkboxStates, setCheckboxStates] = useState<{
+    [key: string]: boolean;
+  }>({});
 
+  const handleCheckboxToggle = (key: number) => {
+    setCheckboxStates((prevStates) => ({
+      ...prevStates,
+      [key]: !prevStates[key],
+    }));
+  };
+
+  const handleClearFilters = () => {
+    setCheckboxStates({});
+  };
   return (
-    <View style={[styles.line, { paddingHorizontal: "7%" }]}>
-      <ScrollView
-        horizontal
-        style={styles.filter}
-        showsHorizontalScrollIndicator={false}
-      >
-        {tabs.map((item) => {
-          return (
-            <Pressable
-              style={[
-                styles.filterBtn,
-                {
-                  backgroundColor:
-                    active == item.key
-                      ? theme.colors.orange
-                      : theme.colors.primary800,
-                  borderWidth: active == item.key ? 0 : 1,
-                  borderColor: active != item.key ? "#D8D8D8" : "#FFFFFF",
-                },
-              ]}
-              key={item.key}
-              onPress={() => {
-                setactive(item.key);
-                onSelect(item.key);
-              }}
-            >
-              <Text
-                color={active == item.key ? "white" : "grey800"}
-                variant="title14black_medium"
-              >
-                {item.text}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </ScrollView>
+    <View>
       <TouchableOpacity
         style={styles.filterdrop}
         onPress={() => refRBSheet.current.open()}
@@ -126,7 +88,7 @@ const Filter = ({ onSelect }: filterProps) => {
             <Text variant="market24Regular" fontSize={20} lineHeight={24}>
               Filter by
             </Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleClearFilters}>
               <Text variant="title12black_medium" color="orange">
                 +{" "}
                 <Text
@@ -140,13 +102,15 @@ const Filter = ({ onSelect }: filterProps) => {
               </Text>
             </TouchableOpacity>
           </View>
-          {list.map((item) => {
+          {filter.map((item) => {
             return (
               <Checkbox
                 text={item.item}
                 size={17}
                 key={item.key}
                 fontSize={16}
+                isChecked={checkboxStates[item.key] || false}
+                onPress={() => handleCheckboxToggle(item.key)}
               />
             );
           })}
@@ -162,9 +126,6 @@ const Filter = ({ onSelect }: filterProps) => {
 };
 
 const styles = StyleSheet.create({
-  filter: {
-    marginVertical: "5%",
-  },
   container: {
     backgroundColor: theme.colors.primary800,
     borderTopStartRadius: 25,
@@ -180,21 +141,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginTop: "7%",
   },
-  filterBtn: {
-    height: 30,
-    borderRadius: 40,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 15,
-    marginRight: 10,
-  },
   filterdrop: {
     borderWidth: 1,
     borderColor: theme.colors.grey300,
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 30,
-    paddingHorizontal: "3%",
+    paddingHorizontal: 10,
     height: 30,
   },
   line: {

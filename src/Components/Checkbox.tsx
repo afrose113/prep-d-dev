@@ -1,16 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
-import BouncyCheckbox from "react-native-bouncy-checkbox";
+import BouncyCheckbox, {
+  IBouncyCheckboxProps,
+} from "react-native-bouncy-checkbox";
 import { theme } from "./Theme";
 
-interface CheckboxProps {
+interface CheckboxProps extends IBouncyCheckboxProps {
   text: string;
   size: number;
   fontSize: number;
   mt?: boolean;
 }
 
-const Checkbox = ({ text, size, fontSize, mt }: CheckboxProps) => {
+const Checkbox = ({ text, size, fontSize, mt, ...props }: CheckboxProps) => {
   return (
     <BouncyCheckbox
       size={size}
@@ -22,6 +24,7 @@ const Checkbox = ({ text, size, fontSize, mt }: CheckboxProps) => {
       textStyle={[styles.checktext, { fontSize: fontSize }]}
       style={[styles.checkbox, { marginTop: mt ? 0 : "5%" }]}
       onPress={(isChecked: boolean) => {}}
+      {...props}
     />
   );
 };

@@ -4,6 +4,7 @@ import { HomeNavigationProps } from "@/Navigator/Navigation";
 import React from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Next from "@/Assets/Svg/Next.svg";
+import { useAppSelector } from "@/Store";
 
 const list = [
   { key: 1, text: "I’m having trouble placing an order" },
@@ -22,8 +23,8 @@ const list2 = [
 ];
 
 const HelpCenter = ({ navigation }: HomeNavigationProps<"HelpCenter">) => {
-  const influence = false;
-  const tabs = influence ? list2 : list;
+  const { role } = useAppSelector((state) => state.local);
+  const tabs = role ? list2 : list;
   return (
     <View style={styles.container}>
       <CartBtnHeader head="Help Center" nav={navigation} />

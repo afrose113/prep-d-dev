@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   ScrollView,
@@ -14,46 +14,51 @@ import { HomeNavigationProps } from "@/Navigator/Navigation";
 import { Text, theme } from "@/Components/Theme";
 import TopItem from "@/Components/TopItem";
 import CartBtnHeader from "@/Components/CartBtnHeader";
+import { Item } from "@/@types/item";
+import { supabase } from "@/Lib/InitSupabase";
+import { useAppSelector } from "@/Store";
 
-const list3 = [
-  {
-    key: 1,
-    text: "Burger",
-    img: require("@/Assets/Images/dish2.png"),
-    price: "3.99",
-  },
-  {
-    key: 2,
-    text: "Smoked Salmon",
-    img: require("@/Assets/Images/gnnochi.png"),
-    price: "3.99",
-  },
-  {
-    key: 3,
-    text: "Monkey Bread",
-    img: require("@/Assets/Images/bread.png"),
-    price: "3.99",
-  },
-];
-const list = [
-  {
-    key: 1,
-    text: "Tacos",
-    img: require("@/Assets/Images/tacos.png"),
-  },
-  {
-    key: 2,
-    text: "Smoked Salmon",
-    img: require("@/Assets/Images/dish2.png"),
-  },
-  {
-    key: 3,
-    text: "Burger",
-    img: require("@/Assets/Images/bread.png"),
-  },
-];
+type Chef_dishes = {
+  approval_admin: boolean;
+  approval_cloud: boolean;
+  cuisine_type: string;
+  description: string;
+  dish_type: null;
+  id: string;
+  image: string;
+  ingredients: [];
+  is_draft: boolean;
+  method: string;
+  name: string;
+  pdf: string;
+  preparation_link: string;
+  price: number;
+  rating: string;
+  total_orders: number;
+  user_id: string;
+};
 
-const ChefProfile = ({ navigation }: HomeNavigationProps<"ChefProfile">) => {
+const ChefProfile = ({
+  navigation,
+  route,
+}: HomeNavigationProps<"ChefProfile">) => {
+  const params: any = route.params;
+  const profile: Item = params?.item;
+  const [chef_dishes, setchef_dishes] = useState<Chef_dishes[] | null>();
+  useEffect(() => {
+    const getChef = async () => {
+      let { data: user_profiles, error } = await supabase
+        .from("influencer_dishes")
+        .select("*")
+        .eq("user_id", profile.user_id)
+        .eq("approval_cloud", true)
+        .eq("is_draft", false);
+      setchef_dishes(user_profiles);
+    };
+    getChef();
+  }, []);
+  const chef_special = chef_dishes?.filter((item) => item.total_orders > 99);
+  const other_dishes = chef_dishes?.filter((item) => item.total_orders < 99);
   return (
     <View style={styles.container}>
       <CartBtnHeader head="Chef Profile" nav={navigation} />
@@ -61,13 +66,10 @@ const ChefProfile = ({ navigation }: HomeNavigationProps<"ChefProfile">) => {
         <View style={styles.card}>
           <View style={styles.line2}>
             <View style={styles.line}>
-              <Image
-                source={require("@/Assets/Images/chef.png")}
-                style={styles.img}
-              />
+              <Image source={{ uri: profile?.image }} style={styles.img} />
               <View>
                 <Text mb="xs" variant="title16black_semibold" color="primary">
-                  Raneen Joudah
+                  {profile?.full_name ?? profile?.name}
                 </Text>
                 <Text mb="s" variant="title12black_medium" color="tertiary">
                   Chef
@@ -90,22 +92,27 @@ const ChefProfile = ({ navigation }: HomeNavigationProps<"ChefProfile">) => {
             </TouchableOpacity>
           </View>
         </View>
-        <Text mb="m" ms="l" variant="title16black_bold" color="primary">
-          Chef Specials
-        </Text>
+        {chef_special && chef_special?.length > 0 && (
+          <Text mb="m" ms="l" variant="title16black_bold" color="primary">
+            Chef Specials
+          </Text>
+        )}
         <ScrollView
           style={styles.special}
           horizontal
           showsHorizontalScrollIndicator={false}
         >
-          {list3.map((item) => {
+          {chef_special?.map((item) => {
             return (
               <TopItem
                 ml={20}
-                text={item.text}
-                key={item.key}
-                img={item.img}
+                text={item.name}
+                key={item.id}
+                img={item.image}
                 price={item.price}
+                desc={item.description}
+                cuisine={item.cuisine_type}
+                rating={item.rating}
               />
             );
           })}
@@ -114,9 +121,18 @@ const ChefProfile = ({ navigation }: HomeNavigationProps<"ChefProfile">) => {
           Other Dishes
         </Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {list.map((item) => {
+          {other_dishes?.map((item) => {
             return (
-              <TopItem ml={20} text={item.text} key={item.key} img={item.img} />
+              <TopItem
+                ml={20}
+                text={item.name}
+                key={item.id}
+                img={item.image}
+                price={item.price}
+                desc={item.description}
+                cuisine={item.cuisine_type}
+                rating={item.rating}
+              />
             );
           })}
         </ScrollView>

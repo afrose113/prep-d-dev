@@ -1,9 +1,10 @@
 import Header from "@/Components/Header";
 import { theme } from "@/Components/Theme";
 import { HomeNavigationProps } from "@/Navigator/Navigation";
-import React from "react";
+import React, { useEffect } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import OrderItem from "./Components/OrderItem";
+import { supabase } from "@/Lib/InitSupabase";
 
 const list = [
   {
@@ -25,6 +26,16 @@ const list = [
 ];
 
 const Orders = ({ navigation }: HomeNavigationProps<"Orders">) => {
+  useEffect(() => {
+    const getOrders = async () => {
+      let { data: orders_hist, error } = await supabase
+        .from("cart")
+        .select("*")
+        .eq("order’_placed", true);
+    };
+    getOrders();
+  }, []);
+
   return (
     <View style={styles.container}>
       <Header navigation={navigation} />

@@ -1,10 +1,11 @@
 import { Text, theme } from "@/Components/Theme";
-import React from "react";
+import React, { useEffect } from "react";
 import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 import Back from "@/Assets/Svg/back.svg";
 import { HomeNavigationProps } from "@/Navigator/Navigation";
 import CartItem from "./Components/CartItem";
 import TextInput from "@/Components/TextInput";
+import { supabase } from "@/Lib/InitSupabase";
 
 const list = [
   {
@@ -24,6 +25,14 @@ const list = [
 ];
 
 const Cart = ({ navigation }: HomeNavigationProps<"Cart">) => {
+  useEffect(() => {
+    const getCart = async () => {
+      let { data: cart, error } = await supabase.from("cart").select("*");
+      console.log({ cart });
+    };
+    getCart();
+  }, []);
+
   const Head = () => {
     return (
       <View style={styles.time}>

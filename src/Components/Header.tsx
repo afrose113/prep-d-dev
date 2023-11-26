@@ -1,5 +1,12 @@
 import React from "react";
-import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Drawericon from "@/Assets/Svg/Menu.svg";
 import Search from "@/Assets/Svg/search.svg";
 import Cart from "@/Assets/Svg/cart.svg";
@@ -20,7 +27,10 @@ const Header = ({ navigation }: headprops) => {
           <TouchableOpacity
             onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
           >
-            <Drawericon />
+            <Image
+              source={require("@/Assets/gif/Menu.gif")}
+              style={styles.gif}
+            />
           </TouchableOpacity>
           <Text ms="m" variant="title12black_medium" color="white">
             Delivering to: House 3, Street 10
@@ -30,14 +40,17 @@ const Header = ({ navigation }: headprops) => {
           <Cart />
         </TouchableOpacity>
       </View>
-      <View style={styles.searchinput}>
+      <Pressable
+        style={styles.searchinput}
+        onPress={() => navigation.navigate("Search")}
+      >
         <Search />
-        <TextInput
-          style={styles.input}
-          placeholder="Search for chefs, dishes, or cuisines"
-          placeholderTextColor={theme.colors.grey400}
-        />
-      </View>
+        <View style={styles.input}>
+          <Text variant="title12black_medium" color="grey400">
+            Search for chefs, dishes, or cuisines
+          </Text>
+        </View>
+      </Pressable>
     </View>
   );
 };
@@ -56,6 +69,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
+  gif: { width: 26, height: 26 },
   searchinput: {
     flexDirection: "row",
     alignItems: "center",

@@ -1,6 +1,6 @@
 import { Text, theme } from "@/Components/Theme";
 import { HomeNavigationProps } from "@/Navigator/Navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   ScrollView,
@@ -14,8 +14,36 @@ import Share from "@/Assets/Svg/share.svg";
 import Star from "@/Assets/Svg/star.svg";
 import Additem from "./Components/Additem";
 import CartBtnHeader from "@/Components/CartBtnHeader";
+import { Item } from "@/@types/item";
+import { supabase } from "@/Lib/InitSupabase";
 
-const Dish = ({ navigation }: HomeNavigationProps<"Dish">) => {
+type dishDetails = {
+  approval_admin: boolean;
+  approval_cloud: boolean;
+  category: string;
+  created_at: string;
+  cuisine_type: string;
+  description: string;
+  id: string;
+  image: string;
+  influencer_name: string;
+  ingredients: [];
+  is_draft: boolean;
+  method: string;
+  name: string;
+  pdf: string;
+  preparation_link: null;
+  price: number;
+  rating: number;
+  total_orders: number;
+  updated_at: string;
+  user_id: string;
+};
+
+const Dish = ({ navigation, route }: HomeNavigationProps<"Dish">) => {
+  const params: any = route.params;
+  const item: Item = params?.item;
+  const [dish, setdish] = useState<dishDetails>();
   const [value, setValue] = useState(0);
   const increaseValue = () => {
     setValue(value + 1);
@@ -23,18 +51,27 @@ const Dish = ({ navigation }: HomeNavigationProps<"Dish">) => {
   const decreaseValue = () => {
     if (value != 0) setValue(value - 1);
   };
+  useEffect(() => {
+    const getDish = async () => {
+      let { data: dish_details, error } = await supabase
+        .from("influencer_dishes")
+        .select("*")
+        // Filters
+        .eq("id", item.dish_id ?? item.id);
+      setdish(dish_details && dish_details[0]);
+    };
+    getDish();
+  }, []);
   return (
     <View style={styles.container}>
-      <CartBtnHeader nav={navigation} head="Monkey Bread" />
+      <CartBtnHeader nav={navigation} head={dish?.name} />
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Image
-          source={require("@/Assets/Images/bread.png")}
-          style={styles.dish}
-        />
+        <Image source={{ uri: dish?.image }} style={styles.dish} />
         <View style={styles.line2}>
           <View>
             <Text variant="title12black_medium" color="primary">
-              Prep’d by Raneen Joudah{"\n"}Italian Cuisine
+              Prep’d by {dish?.influencer_name} {"\n"}
+              {dish?.cuisine_type} Cuisine
             </Text>
           </View>
           <View style={styles.line}>
@@ -49,19 +86,20 @@ const Dish = ({ navigation }: HomeNavigationProps<"Dish">) => {
         <View style={[styles.line, { marginStart: "7%", marginTop: "3%" }]}>
           <Star />
           <Text ms="xs" variant="title12black_medium" color="primary">
-            4.5
+            {dish?.rating}
           </Text>
         </View>
         <Text mt="s" ms="l" variant="title12black_semibold" color="primary">
-          from SAR 3.99
+          from SAR {dish?.price}
         </Text>
         <Text
           variant="title12black_regular"
           color="grey800"
           marginHorizontal="l"
+          textTransform="capitalize"
           mt="m"
         >
-          A sweet, gooey cake made from balls of dough rolled in cinnamon sugar.
+          {dish?.description}
         </Text>
         <Text
           variant="title16black_semibold"
@@ -155,7 +193,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 30,
-    width: 200,
+    width: "57%",
   },
   plusminus: {
     flexDirection: "row",
@@ -165,7 +203,7 @@ const styles = StyleSheet.create({
     height: 44,
     paddingHorizontal: "5%",
     alignSelf: "flex-end",
-    width: 126,
+    width: "38%",
     justifyContent: "center",
   },
   head: {
@@ -187,7 +225,13 @@ const styles = StyleSheet.create({
     marginHorizontal: "7%",
     marginTop: "5%",
   },
-  dish: { borderRadius: 8, alignSelf: "center", marginTop: "7%" },
+  dish: {
+    borderRadius: 8,
+    alignSelf: "center",
+    marginTop: "7%",
+    height: 222,
+    width: "86%",
+  },
 });
 
 export default Dish;

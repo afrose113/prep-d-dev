@@ -1,5 +1,5 @@
 import { Text, theme } from "@/Components/Theme";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ImageBackground,
   Pressable,
@@ -10,21 +10,42 @@ import {
 import Heart from "@/Assets/Svg/heart.svg";
 import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { HomeRoutes } from "@/Navigator/Navigation";
+import { ICuisineResult } from "@/Hooks/useCommon";
+import { supabase } from "@/Lib/InitSupabase";
+import { useAppSelector } from "@/Store";
 
 interface CuisinesProps {
-  list: {
-    img: HTMLImageElement;
-    name: string;
-  };
+  list: ICuisineResult;
   nav: BottomTabNavigationProp<HomeRoutes, keyof HomeRoutes>;
+  is_fav?: boolean;
 }
 
-const Item = ({ list, nav }: CuisinesProps) => {
-  const [active, setactive] = useState(false);
+const Item = ({ list, nav, is_fav }: CuisinesProps) => {
+  const [active, setactive] = useState(is_fav ?? false);
+  const { user_id } = useAppSelector((state) => state.local);
+
+  useEffect(() => {
+    //insert fav cuisine
+    const getFav = async () => {
+      if (active) {
+        const { error } = await supabase
+          .from("consumer_favourite_cuisine")
+          .insert([{ user_id: user_id, cuisine_type: list.type }])
+          .select();
+      } else {
+        await supabase
+          .from("consumer_favourite_cuisine")
+          .delete()
+          .eq("user_id", user_id)
+          .eq("cuisine_type", list.type);
+      }
+    };
+    getFav();
+  }, [active, list.type]);
   return (
     <View style={styles.item}>
       <ImageBackground
-        source={list.img}
+        source={{ uri: list.image }}
         style={styles.img}
         imageStyle={styles.imgbackground}
       >
@@ -36,12 +57,16 @@ const Item = ({ list, nav }: CuisinesProps) => {
         </Pressable>
       </ImageBackground>
       <View style={styles.line}>
-        <Text variant="title16black_bold" color="grey800">
-          {list.name}
+        <Text
+          textTransform="capitalize"
+          variant="title16black_bold"
+          color="grey800"
+        >
+          {list.type}
         </Text>
         <TouchableOpacity
           style={styles.btn}
-          onPress={() => nav.navigate("Dishes")}
+          onPress={() => nav.navigate("Dishes", { list } as any)}
         >
           <Text variant="title12black_semibold" color="white">
             View Dishes

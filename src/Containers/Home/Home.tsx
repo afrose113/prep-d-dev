@@ -1,71 +1,35 @@
 import { Text, theme } from "@/Components/Theme";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import Header from "../../Components/Header";
 import { HomeNavigationProps } from "@/Navigator/Navigation";
 import TopItem from "@/Components/TopItem";
 import ImageScroll from "./Components/ImageScroll";
 import Banner from "./Components/Banner";
-
-const list = [
-  {
-    key: 1,
-    text: "Amr Kaki",
-    img: require("@/Assets/Images/chef.png"),
-  },
-  {
-    key: 2,
-    text: "Raneen Joudah",
-    img: require("@/Assets/Images/chef2.png"),
-  },
-  {
-    key: 3,
-    text: "Amr Kaki",
-    img: require("@/Assets/Images/Chef3.png"),
-  },
-];
-const list2 = [
-  {
-    key: 1,
-    text: "Monkey Bread",
-    img: require("@/Assets/Images/bread.png"),
-    chef: "Raneen Joudah",
-    type: "DESSERT",
-  },
-  {
-    key: 2,
-    text: "Smoked Salmon",
-    img: require("@/Assets/Images/Dish.png"),
-    chef: "Khulood Olaqi",
-    type: "DESSERT",
-  },
-  {
-    key: 3,
-    text: "Burger",
-    img: require("@/Assets/Images/dish2.png"),
-    chef: "Khulood Olaqi",
-    type: "BREAKFAST",
-  },
-];
-const list3 = [
-  {
-    key: 1,
-    text: "Monkey Bread",
-    img: require("@/Assets/Images/dish2.png"),
-  },
-  {
-    key: 2,
-    text: "Smoked Salmon",
-    img: require("@/Assets/Images/Dish.png"),
-  },
-  {
-    key: 3,
-    text: "Amr Kaki",
-    img: require("@/Assets/Images/bread.png"),
-  },
-];
+import { useAppSelector } from "@/Store";
+import {
+  ICuisineResult,
+  IDishResult,
+  IInfluenceResult,
+  useCommon,
+} from "@/Hooks/useCommon";
 
 const Home = ({ navigation }: HomeNavigationProps<"Home">) => {
+  const { user_id } = useAppSelector((state) => state.local);
+  const [dish, setDish] = useState<IDishResult[]>();
+  const [influencer, setinfluencer] = useState<IInfluenceResult[]>();
+  const [cuisine, setcuisine] = useState<ICuisineResult[]>();
+  const { mutate } = useCommon({
+    onSuccess(data) {
+      setinfluencer(data.influencer);
+      setDish(data.dish);
+      setcuisine(data.cuisine);
+    },
+  });
+  useEffect(() => {
+    mutate({ user_id, type: "common", trending: true });
+  }, []);
+
   return (
     <View style={styles.container}>
       <Header navigation={navigation} />
@@ -88,14 +52,19 @@ const Home = ({ navigation }: HomeNavigationProps<"Home">) => {
         </View>
         <View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {list.map((item) => {
+            {influencer?.map((item, index) => {
               return (
                 <TopItem
-                  ml={20}
-                  text={item.text}
-                  key={item.key}
-                  img={item.img}
-                  onPress={() => navigation.navigate("ChefProfile")}
+                  me={20}
+                  text={item.full_name}
+                  key={item.id}
+                  img={item.image}
+                  is_fav={item.is_favorite}
+                  index={index}
+                  chef_id={item.user_id}
+                  onPress={() =>
+                    navigation.navigate("ChefProfile", { item } as any)
+                  }
                 />
               );
             })}
@@ -117,16 +86,18 @@ const Home = ({ navigation }: HomeNavigationProps<"Home">) => {
         </View>
         <View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {list2.map((item) => {
+            {dish?.map((item, index) => {
               return (
                 <TopItem
-                  ml={20}
-                  text={item.text}
-                  key={item.key}
-                  img={item.img}
-                  chef={item.chef}
-                  deserttype={item.type}
-                  onPress={() => navigation.navigate("Dish")}
+                  me={20}
+                  text={item.name}
+                  key={item.id}
+                  img={item.image}
+                  dish_id={item.id}
+                  index={index}
+                  deserttype={item.category}
+                  is_fav={item.is_favorite}
+                  onPress={() => navigation.navigate("Dish", { item } as any)}
                 />
               );
             })}
@@ -152,14 +123,19 @@ const Home = ({ navigation }: HomeNavigationProps<"Home">) => {
             showsHorizontalScrollIndicator={false}
             style={styles.scroll}
           >
-            {list3.map((item) => {
+            {cuisine?.map((item, index) => {
               return (
                 <TopItem
-                  ml={20}
-                  text={item.text}
-                  key={item.key}
-                  img={item.img}
-                  onPress={() => navigation.navigate("Dish")}
+                  me={20}
+                  text={item.type}
+                  cuisine_type={item.type}
+                  key={item.id}
+                  index={index}
+                  img={item.image}
+                  is_fav={item.is_favorite}
+                  onPress={() =>
+                    navigation.navigate("Dishes", { list: item } as any)
+                  }
                 />
               );
             })}
@@ -174,6 +150,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.primary800,
+    overflow: "hidden",
   },
   scroll: { marginBottom: "30%" },
   title: {

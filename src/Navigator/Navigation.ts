@@ -49,4 +49,15 @@ export type HomeRoutes = {
   Checkout: undefined;
   Login: undefined;
   Explore: undefined;
+  HomeInfluencer: undefined;
+  Earnings: undefined;
+  Transactions: undefined;
+  InfluencerProfile: undefined;
+  DishDescription: undefined;
+  PendingApprovals: undefined;
+  SavedDrafts: undefined;
+  Notifications: undefined;
+  Chats: undefined;
+  UploadRecipe: undefined;
+  Search: undefined;
 };

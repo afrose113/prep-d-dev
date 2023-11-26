@@ -9,9 +9,11 @@ import { HomeRoutes } from "@/Navigator/Navigation";
 
 interface headprops {
   navigation: BottomTabNavigationProp<HomeRoutes, keyof HomeRoutes>;
+  head: string;
+  onSelect: (id: string) => void;
 }
 
-const Header = ({ navigation }: headprops) => {
+const Header = ({ navigation, head, onSelect }: headprops) => {
   return (
     <View style={styles.container}>
       <View style={styles.line2}>
@@ -23,7 +25,7 @@ const Header = ({ navigation }: headprops) => {
             <Back />
           </TouchableOpacity>
           <Text ms="m" variant="market24Regular" color="white">
-            Chefs
+            {head}
           </Text>
         </View>
         <TouchableOpacity>
@@ -34,6 +36,7 @@ const Header = ({ navigation }: headprops) => {
         <Search />
         <TextInput
           style={styles.input}
+          onChangeText={(e) => onSelect(e)}
           placeholder="Search for chefs"
           placeholderTextColor={theme.colors.grey400}
         />

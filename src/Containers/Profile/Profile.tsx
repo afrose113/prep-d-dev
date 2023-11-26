@@ -1,7 +1,8 @@
 import { Text, theme } from "@/Components/Theme";
 import { HomeNavigationProps } from "@/Navigator/Navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   Pressable,
   StyleSheet,
@@ -11,30 +12,136 @@ import {
 import Camera from "@/Assets/Svg/camera.svg";
 import CartBtnHeader from "@/Components/CartBtnHeader";
 import TextInput from "@/Components/TextInput";
+import { supabase } from "@/Lib/InitSupabase";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { ProfileItem } from "../InfluencerProfile/InfluencerProfile";
+import Toast from "react-native-toast-message";
+import { useAppSelector } from "@/Store";
+
+const ProfileSchema = Yup.object().shape({
+  mobile: Yup.string()
+    .required("Phone Number is required")
+    .matches(/^[0-9]+$/, "Invalid Mobile number: Only numbers are allowed"),
+  email: Yup.string()
+    .email("Invalid Email Address")
+    .required("Email is Required"),
+  name: Yup.string().required("Name is Required"),
+});
 
 const Profile = ({ navigation }: HomeNavigationProps<"Profile">) => {
+  const [profile, setprofile] = useState<ProfileItem>();
+  const { user_id } = useAppSelector((state) => state.local);
+  useEffect(() => {
+    const getProfile = async () => {
+      const { data } = await supabase.from("user_profiles").select("*");
+      setprofile(data && data[0]);
+    };
+    getProfile();
+  }, []);
+  const success = () => {
+    Toast.show({
+      type: "success",
+      text1: "Profile Updated",
+    });
+    setSubmitting(false);
+  };
+  const updateProfile = async (
+    full_name: string | undefined,
+    email: string | undefined,
+    mobile_number: string | undefined
+  ) => {
+    const { data, error } = await supabase
+      .from("user_profiles")
+      .update([
+        {
+          full_name,
+          email,
+          mobile_number,
+          image: profile?.image,
+        },
+      ])
+      .eq("user_id", user_id)
+      .select("*");
+    data != null
+      ? success()
+      : Toast.show({
+          type: "error",
+          text1: error?.message,
+        });
+    console.log({ data });
+    setSubmitting(false);
+  };
+  const {
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    errors,
+    touched,
+    isSubmitting,
+    setSubmitting,
+    setFieldValue,
+    values,
+  } = useFormik({
+    validationSchema: ProfileSchema,
+    enableReinitialize: true,
+    initialValues: {
+      name: profile?.full_name,
+      email: profile?.email ?? "",
+      mobile: profile?.mobile_number ?? "",
+    },
+    onSubmit: (value) => {
+      updateProfile(value.name, value.email, value.mobile);
+    },
+  });
   return (
     <View style={styles.container}>
       <CartBtnHeader nav={navigation} head="Profile" />
       <View>
         <Pressable style={styles.btn}>
-          <Image
-            source={require("@/Assets/Images/chef.png")}
-            style={styles.profile_pic}
-          />
+          <Image source={{ uri: profile?.image }} style={styles.profile_pic} />
           <View style={styles.camera}>
             <Camera />
           </View>
         </Pressable>
         <View style={styles.inputs}>
-          <TextInput placeholder="Name" />
-          <TextInput placeholder="Email" />
-          <TextInput placeholder="Mobile Number" />
+          <TextInput
+            placeholder="Name"
+            onChangeText={handleChange("name")}
+            onBlur={handleBlur("name")}
+            value={values.name}
+            error={errors.name}
+            touched={touched.name}
+          />
+          <TextInput
+            placeholder="Email"
+            value={values.email}
+            onChangeText={handleChange("email")}
+            onBlur={handleBlur("email")}
+            error={errors.email}
+            touched={touched.email}
+          />
+          <TextInput
+            placeholder="Mobile Number"
+            value={values.mobile}
+            onChangeText={handleChange("mobile")}
+            onBlur={handleBlur("mobile")}
+            error={errors.mobile}
+            touched={touched.mobile}
+          />
         </View>
-        <TouchableOpacity style={styles.savebtn}>
-          <Text variant="title16black_semibold" color="white">
-            Save
-          </Text>
+        <TouchableOpacity
+          style={styles.savebtn}
+          onPress={handleSubmit as () => void}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <ActivityIndicator color={theme.colors.white} />
+          ) : (
+            <Text variant="title16black_semibold" color="white">
+              Save
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
     </View>
